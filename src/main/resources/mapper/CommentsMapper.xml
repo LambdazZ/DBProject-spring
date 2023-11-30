@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bitasync.database_bqy.dao.CommentsMapper">
+
+    <resultMap id="CommentsMapper" type="com.bitasync.database_bqy.model.Comments">
+        <id property="id" column="id"/>
+        <result property="content" column="content" javaType="java.lang.String"/>
+        <result property="comment_time" column="comment_time" javaType="java.sql.Timestamp" />
+        <result property="score" column="score" javaType="java.lang.Integer"  />
+        <result property="userId" column="userId" javaType="java.lang.Integer"  />
+        <result property="gameId" column="gameId" javaType="java.lang.Integer"  />
+    </resultMap>
+
+    <select id="getComments" resultMap="CommentsMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `content`, `comment_time`, `score`, `userId`, `gameId`
+        FROM comments
+        WHERE id = #{id}
+    </select>
+
+    <select id="getCommentsByUserId" resultMap="CommentsMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `content`, `comment_time`, `score`, `userId`, `gameId`
+        FROM comments
+        WHERE userId = #{userId}
+    </select>
+
+    <select id="getCommentsByGameId" resultMap="CommentsMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `content`, `comment_time`, `score`, `userId`, `gameId`
+        FROM comments
+        WHERE gameId = #{gameId}
+    </select>
+
+    <delete id="clearComments" parameterType="com.bitasync.database_bqy.model.Comments">
+        DELETE
+        FROM comments
+        WHERE userID = #{userId}
+        AND content = #{content}
+        AND gameId = #{gameId}
+        LIMIT 1
+    </delete>
+
+    <insert id="insertComments" parameterType="com.bitasync.database_bqy.model.Comments">
+        INSERT INTO `comments`(`content`, `score`, `userId`, `gameId`)
+            VALUE(#{content}, #{score}, #{userId}, #{gameId})
+    </insert>
+
+    <update id="updateComments" parameterType="com.bitasync.database_bqy.model.Comments">
+        UPDATE `comments`
+        SET
+            content = #{content},
+            score = #{score}
+        WHERE
+            userId = #{userId}
+        AND
+            gameId = #{gameId}
+        AND
+            content = #{old_content}
+    </update>
+</mapper>

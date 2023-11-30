@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bitasync.database_bqy.dao.GameMapper">
+
+    <resultMap id="GameMapper" type="com.bitasync.database_bqy.model.Game">
+        <id property="id" column="id"/>
+        <result property="name" column="name" javaType="java.lang.String"/>
+        <result property="vender_id" column="vender_id" javaType="java.lang.Integer" />
+        <result property="price" column="price" javaType="java.math.BigDecimal"  />
+        <result property="tag" column="tag" javaType="java.lang.String"  />
+        <result property="score" column="score" javaType="java.lang.Double"  />
+        <result property="description" column="description" javaType="java.lang.String"  />
+        <result property="cover" column="cover" javaType="java.lang.String"  />
+        <result property="picture1" column="picture1" javaType="java.lang.String"  />
+        <result property="picture2" column="picture2" javaType="java.lang.String"  />
+    </resultMap>
+
+    <select id="getGame" resultMap="GameMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `name`, `vender_id`, `price`, `tag`, `score`, `description`, `cover`, `picture1`, `picture2`
+        FROM game_msg
+        WHERE id = #{id}
+    </select>
+
+    <select id="getGameByTag" resultMap="GameMapper" parameterType="java.lang.String">
+        SELECT `id`, `name`, `vender_id`, `price`, `tag`, `score`, `description`, `cover`, `picture1`, `picture2`
+        FROM game_msg
+        WHERE tag LIKE CONCAT('%', #{tag}, '%')
+        ORDER BY score DESC
+    </select>
+</mapper>
