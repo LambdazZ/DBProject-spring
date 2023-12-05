@@ -67,9 +67,14 @@ public class CommentsController
             if(commentsList.isEmpty())
             {
                 List<Game> gameByTag = gameService.getGameByTag("").get();
+                int cnt = 0;
                 List<Game> res = new ArrayList<>();
-                for(int i = 0; i < 16; ++i)
-                    res.add(gameByTag.get(i));
+                for(int i = 0; cnt < 16 && i < gameByTag.size(); ++i)
+                    if(Math.random() > 0.2)
+                    {
+                        res.add(gameByTag.get(i));
+                        ++cnt;
+                    }
                 return ApiResponse.ok(200, res);
             }
             Map<String, Integer> map = new HashMap<>();
@@ -86,6 +91,7 @@ public class CommentsController
             Set<Game> set = new HashSet<>();
             List<Map.Entry<String, Integer>> entryList = new ArrayList<>(map.entrySet());
             entryList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+            double threshold = 0.15;
             for(int i = 0; i < 4 && i < entryList.size(); ++i)
             {
                 int cnt = 0;
@@ -94,7 +100,7 @@ public class CommentsController
                 for(int j = 0; cnt < 1 << (3 - i) && j < gameByTag.size(); ++j)
                 {
                     Game candidate = gameByTag.get(j);
-                    if(!set.contains(candidate))
+                    if(!set.contains(candidate) && Math.random() > threshold)
                     {
                         set.add(candidate);
                         if(!bought.contains(candidate))
@@ -104,12 +110,13 @@ public class CommentsController
                         }
                     }
                 }
+                threshold += 0.15;
             }
             List<Game> games = gameService.getGameByTag("").get();
             for(int i = 0;res.size() < 16 && i < games.size(); ++i)
             {
                 Game candidate = games.get(i);
-                if (!set.contains(candidate))
+                if (!set.contains(candidate) && Math.random() > threshold)
                 {
                     set.add(candidate);
                     if(!bought.contains(candidate))
@@ -157,6 +164,7 @@ public class CommentsController
     @PostMapping(value = "/comments/clear")
     ApiResponse clear(@RequestBody Comments comments)
     {
+        System.out.println(comments);
         try
         {
             commentsService.clearComments(comments);
@@ -164,7 +172,13 @@ public class CommentsController
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             return ApiResponse.error(500, "未知错误");
         }
+    }
+
+    public static void main(String[] args)
+    {
+        System.out.println(Math.random());
     }
 }
